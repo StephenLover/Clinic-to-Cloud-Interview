@@ -1,5 +1,5 @@
 # Clinic-to-Cloud-Interview
-# April 15, 2019
+## April 15, 2019
 
 Hi, this is the code repo for Clinic to Cloud interview, written by Stephen.
 
