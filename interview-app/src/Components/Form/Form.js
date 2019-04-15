@@ -115,7 +115,6 @@ class Form extends Component {
     if (selectorPropertyProps) {
       renderContext = selectorPropertyProps.map(singleForm => {
         const { id, display, displayName, options } = singleForm;
-        // console.log(options);
         if (display) {
           return (
             <div key={id} id={id}>
@@ -156,8 +155,6 @@ class Form extends Component {
   };
 
   handleSubmit = event => {
-    // console.log(this.state);
-    // console.log(this.props.formProps.dataElements);
     event.preventDefault();
     const props = this.props.formProps.dataElements;
     const { weight, height, validate } = this.state;
@@ -227,12 +224,6 @@ class Form extends Component {
     })(validate, props);
 
     const convertToJson = () => {
-      console.log(
-        parseFloat(weight),
-        parseFloat(height / 100),
-        parseFloat(height / 100) ** 2,
-        parseFloat(weight) / parseFloat(height / 100) ** 2
-      );
       const bmi = (parseFloat(weight) / parseFloat(height / 100) ** 2).toFixed(
         1
       );
@@ -276,9 +267,6 @@ class Form extends Component {
 
   render() {
     let context = "loading form...";
-    // if (this.state.optPropsMap) {
-    //   console.log(this.state.optPropsMap.get("textInput"));
-    // }
 
     if (this.state.loading) {
       return context;
@@ -291,7 +279,6 @@ class Form extends Component {
       const numberInputPropsArray = props.filter(
         prop => prop.type === "numberInput"
       );
-      console.log(this.state);
       context = (
         <form onSubmit={this.handleSubmit}>
           <h3> {this.state.observationName} </h3>{" "}
