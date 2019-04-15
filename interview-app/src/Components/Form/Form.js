@@ -8,7 +8,7 @@ class Form extends Component {
       loading: true,
       id: null,
       observationName: null,
-      error: {}
+      validate: {}
     };
   }
 
@@ -18,22 +18,30 @@ class Form extends Component {
       observationName: this.props.formProps.observationName || null
     });
     const props = this.props.formProps.dataElements;
-    console.log(this.props.formProps.dataElements);
     for (let prop of props) {
       let initialValue;
       if (prop.type === "textInput") {
         initialValue = "";
       } else if (prop.type === "numberInput") {
-        initialValue = 0;
+        initialValue = -1;
       } else if (prop.type === "select") {
         initialValue = 1;
       }
-      await this.setState({ [prop.id]: initialValue });
+      await this.setState({
+        [prop.id]: initialValue
+      });
     }
+    const requiredValidateProps = props
+      .filter(prop => prop.isRequired === true)
+      .reduce((lastValiObj, currentProp) => {
+        const { id } = currentProp;
+        lastValiObj[id] = { validation: false, errMsg: "" };
+        return lastValiObj;
+      }, {});
     this.setState({
-      loading: false
+      loading: false,
+      validate: requiredValidateProps
     });
-    // console.log(this.state);
   }
 
   // textInput-Based: Name
@@ -41,19 +49,25 @@ class Form extends Component {
     let renderContext = null;
     if (textPropertyProps) {
       renderContext = textPropertyProps.map(singleForm => {
-        const { id, display, displayName, isRequired } = singleForm;
+        const { id, display, displayName } = singleForm;
+        const { [id]: propValidationObj } = this.state.validate;
+        const { errMessage, validation } = propValidationObj;
         if (display) {
           return (
-            <div className={id}>
+            <div key={id} className={id}>
               <label>
-                {displayName}
+                {" "}
+                {displayName}{" "}
                 <input
-                  name={displayName.toLowerCase()}
+                  name={id}
                   type="text"
                   value={this.state.value}
                   onChange={this.handleChange}
-                />
-              </label>
+                />{" "}
+              </label>{" "}
+              {validation === false && errMessage ? (
+                <h5 className="input-error-text">{errMessage}</h5>
+              ) : null}
             </div>
           );
         }
@@ -64,31 +78,29 @@ class Form extends Component {
 
   // numberInput-Based: Head Circumference, Height, Weight, BMI
   handleNumberInput = numberPropertyProps => {
-    console.log(numberPropertyProps);
     let renderContext = null;
     if (numberPropertyProps) {
       renderContext = numberPropertyProps.map(singleForm => {
-        const {
-          id,
-          display,
-          displayName,
-          isRequired,
-          unitOfMeasure,
-          type
-        } = singleForm;
+        const { id, display, displayName, unitOfMeasure } = singleForm;
         if (display) {
+          const { [id]: propValidationObj } = this.state.validate;
+          const { errMessage, validation } = propValidationObj;
           return (
-            <div className={id}>
+            <div key={id} className={id}>
               <label>
-                {displayName}
+                {" "}
+                {displayName}{" "}
                 <input
-                  name={displayName.toLowerCase()}
+                  name={id}
                   type="text"
                   value={this.state.value}
                   onChange={this.handleChange}
                 />{" "}
-                {unitOfMeasure}
-              </label>
+                {unitOfMeasure}{" "}
+              </label>{" "}
+              {validation === false && errMessage ? (
+                <h5 className="input-error-number">{errMessage}</h5>
+              ) : null}
             </div>
           );
         }
@@ -99,26 +111,32 @@ class Form extends Component {
   };
 
   handleSelectorInput = selectorPropertyProps => {
-    console.log(selectorPropertyProps);
     let renderContext = null;
     if (selectorPropertyProps) {
       renderContext = selectorPropertyProps.map(singleForm => {
-        const { id, display, displayName, isRequire, options } = singleForm;
+        const { id, display, displayName, options } = singleForm;
+        // console.log(options);
         if (display) {
           return (
-            <div id={id}>
+            <div key={id} id={id}>
               <label>
-                {displayName}
+                {" "}
+                {displayName}{" "}
                 <select
-                  name={displayName.toLowerCase()}
+                  name={id}
                   value={this.state.gender}
                   onChange={this.handleChange}
                 >
                   {options.map(gender => {
-                    return <option value={gender.id}>{gender.name}</option>;
-                  })}
-                </select>
-              </label>
+                    return (
+                      <option key={gender.sortOrder} value={gender.id}>
+                        {" "}
+                        {gender.name}{" "}
+                      </option>
+                    );
+                  })}{" "}
+                </select>{" "}
+              </label>{" "}
             </div>
           );
         }
@@ -129,8 +147,8 @@ class Form extends Component {
   };
 
   handleChange = event => {
+    event.preventDefault();
     const formName = event.target.name;
-    console.log(event.target.value, formName);
 
     this.setState({
       [formName]: event.target.value
@@ -138,25 +156,84 @@ class Form extends Component {
   };
 
   handleSubmit = event => {
-    console.log(this.state);
-    console.log(this.props.formProps.dataElements);
-
+    // console.log(this.state);
+    // console.log(this.props.formProps.dataElements);
+    event.preventDefault();
     const props = this.props.formProps.dataElements;
+    const { weight, height, validate } = this.state;
 
-    const { weight, height } = this.state;
-    const bmi =
-      parseInt(weight) / ((parseInt(height / 100) * parseInt(height)) / 100);
-    this.setState({
-      bmi: parseFloat(bmi.toFixed(1))
-    });
+    const textInputValidator = propId => {
+      const { [propId]: name } = this.state;
+      if (name.length === 0) {
+        return {
+          validation: false,
+          errMessage: `Please input number in ${propId.toUpperCase()}!`
+        };
+      }
 
+      return name.split(" ").length === 2
+        ? { validation: true, errMessage: "" }
+        : {
+            validation: false,
+            errMessage: `Please make sure the input ${propId.toUpperCase()} has been separated by a space, for example, "John citizen" `
+          };
+    };
+
+    const numberInputValidator = (props, propId) => {
+      const { [propId]: value } = this.state;
+      const { bounds, unitOfMeasure } = props.filter(
+        prop => prop.id === propId
+      )[0];
+      const { upperLimit } = bounds;
+      if (value < 0)
+        return {
+          validation: false,
+          errMessage: `Please input number in ${propId.toUpperCase()}!`
+        };
+      else if (isNaN(propId) && value <= upperLimit) {
+        return {
+          validation: true,
+          errMessage: ""
+        };
+      }
+      return {
+        validation: false,
+        errMessage: `Please check in ${propId.toUpperCase()} and make sure the input number below ${upperLimit} ${unitOfMeasure}. `
+      };
+    };
+
+    const validationCheck = (validate, props) => {
+      let validateObj = validate;
+      for (let simplePropNeedValidate in validate) {
+        const { id: validationPropId, type: validationPropType } = props.filter(
+          prop => simplePropNeedValidate === prop.id
+        )[0];
+        let validation = false;
+        if (validationPropType === "textInput") {
+          validation = textInputValidator(validationPropId);
+        } else if (validationPropType === "numberInput") {
+          validation = numberInputValidator(props, validationPropId);
+        }
+        validateObj[validationPropId] = validation;
+        // validationObj[validationPropId] = validation;
+      }
+      this.setState({
+        validate: validateObj
+      });
+      return validateObj;
+    };
+
+    console.log(validationCheck(validate, props));
+
+    const bmi = (parseFloat(weight) / parseFloat(height / 100) ** 2).toFixed(1);
     const outputObj = props.reduce((accObj, currentProp) => {
       let { id, type } = currentProp;
       let { [id]: value } = this.state;
       // eslint-disable-next-line no-self-assign
-      type === "numberInput" ? (value = parseInt(value, 10)) : (value = value);
-      accObj[id] = value;
-
+      if (type === "numberInput" || type === "select") {
+        value = parseInt(value, 10);
+      }
+      id === "bmi" ? (accObj[id] = parseFloat(bmi)) : (accObj[id] = value);
       return accObj;
     }, {});
     console.log(outputObj);
@@ -183,18 +260,16 @@ class Form extends Component {
       console.log(this.state);
       context = (
         <form onSubmit={this.handleSubmit}>
-          <h3>{this.state.observationName}</h3>
+          <h3> {this.state.observationName} </h3>{" "}
           {textInputPropsArray
             ? this.handleTextInput(textInputPropsArray)
             : null}
-
           {selectorPropsArray
             ? this.handleSelectorInput(selectorPropsArray)
             : null}
-
           {numberInputPropsArray
             ? this.handleNumberInput(numberInputPropsArray)
-            : null}
+            : null}{" "}
           <input type="submit" value="Submit" />
         </form>
       );
