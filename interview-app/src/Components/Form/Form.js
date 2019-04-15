@@ -29,7 +29,8 @@ class Form extends Component {
     );
     this.setState({
       id: this.props.formProps.id || null,
-      observationName: this.props.formProps.observationName || null
+      observationName: this.props.formProps.observationName || null,
+      optPropsMap: optimisedPropsMap || null
     });
     for (let [dataType, dataObj] of optimisedPropsMap) {
       let initialValue;
@@ -44,105 +45,137 @@ class Form extends Component {
         await this.setState({ [data]: initialValue });
       }
     }
-    console.log(this.state);
+    this.setState({
+      loading: false
+    });
+    // console.log(this.state);
   }
 
   // textInput-Based: Name
   handleTextInput = propertyProps => {
-    console.log(propertyProps);
+    const { name: properties } = propertyProps;
+    const { display, displayName, isRequired } = properties;
+    // console.log(properties);
+
+    if (display) {
+      return (
+        <div>
+          <label>
+            {displayName}
+            <input
+              name={displayName.toLowerCase()}
+              type="text"
+              value={this.state.value}
+              onChange={this.handleChange}
+            />
+          </label>
+        </div>
+      );
+    }
+    // console.log(propertyProps);
   };
 
   // numberInput-Based: Head Circumference, Height, Weight, BMI
-  handleTextNumberInput = propertyProps => {
-    console.log(propertyProps);
-    if (propertyProps) {
+  handleNumberInput = propertyProps => {
+    const numberInputPropsArray = this.props.formProps.dataElements.filter(
+      property => property.type === "numberInput"
+    );
+    console.log(numberInputPropsArray);
+
+    let renderContext;
+    for (const property in propertyProps) {
       const {
-        displayName,
         display,
+        displayName,
         isRequired,
-        validate,
-        type,
         bounds,
         unitOfMeasure
-      } = propertyProps;
-      // console.log(
-      //   displayName,
-      //   display,
-      //   isRequired,
-      //   validate,
-      //   type,
-      //   bounds,
-      //   unitOfMeasure
-      // );
+      } = propertyProps[property];
+      console.log(display, displayName);
       if (display) {
-        return (
+        renderContext += (
           <div>
             <label>
               {displayName}
-              <input
-                name={displayName.toLowerCase()}
-                type="text"
-                value={this.state.displayName}
-                onChange={this.hasssndleChange}
-              />
+              <input value={this.state.property} onChange={this.handleChange} />
             </label>
-            {unitOfMeasure}
+            <input type="submit" value="Submit" />
           </div>
         );
       }
     }
+    return renderContext;
   };
 
   handleSelector = propertyProps => {
-    //     const nameConstraint = propertyProps;
     // console.log(propertyProps);
+    const { gender: properties } = propertyProps;
+    const { display, displayName, isRequired, options } = properties;
+    // console.log(options);
+
+    // need to write sort function
+
+    if (display) {
+      return (
+        <div>
+          <label>
+            {displayName}
+            <select
+              name={displayName.toLowerCase()}
+              value={this.state.gender}
+              onChange={this.handleChange}
+            >
+              {options.map(gender => {
+                return <option value={gender.id}>{gender.name}</option>;
+              })}
+            </select>
+          </label>
+        </div>
+      );
+    }
   };
 
   handleChange = event => {
     const formName = event.target.name;
-    console.log(event.target.value);
+    console.log(event.target.value, formName);
 
     this.setState({
-      [`${formName}Input`]: event.target.value
+      [formName]: event.target.value
     });
   };
 
   handleSubmit = event => {
     // console.log(this.state);
-    alert("Your favorite flavor is: " + this.state.value);
+    console.log(this.state);
     event.preventDefault();
   };
 
   render() {
     let context = "loading form...";
-
+    // if (this.state.optPropsMap) {
+    //   console.log(this.state.optPropsMap.get("textInput"));
+    // }
+    // console.log(this.state);
     if (this.state.loading) {
       return context;
     } else {
-      let formPropsMap = new Map();
-      for (let prop of this.props.formProps.dataElements) {
-        const { id, ...restProperties } = prop;
-        formPropsMap.set(id, restProperties);
-      }
-      // console.log(formPropsMap);
-      const propRenderDecider = (value, key, map) => {
-        // console.log(`m[${key}] = ${value.type}`);
-        if (
-          key &&
-          (value.type === "textInput" || value.type === "numberInput")
-        ) {
-          // console.log(this.handleTextNumberInput(formPropsMap.get(key)));
-          return this.handleTextNumberInput(formPropsMap.get(key));
-        } else if (key && value.type === "select") {
-          // console.log(this.handleSelector(formPropsMap.get(key)));
-          return this.handleSelector(formPropsMap.get(key));
-        }
-      };
-
-      // console.log(formPropsMap);
+      console.log(this.state);
       context = (
         <form onSubmit={this.handleSubmit}>
-          {formPropsMap.forEach(propRenderDecider)}
+          {/* // textinput */}
+          {this.state.optPropsMap.get("textInput")
+            ? this.handleTextInput(this.state.optPropsMap.get("textInput"))
+            : null}
+          {/* {this.handleTextInput(this.state.optPropsMap["textInput"])} */}
+
+          {this.state.optPropsMap.get("select")
+            ? this.handleSelector(this.state.optPropsMap.get("select"))
+            : null}
+
+          {this.state.optPropsMap.get("numberInput")
+            ? this.handleNumberInput(this.state.optPropsMap.get("numberInput"))
+            : null}
+
           <input type="submit" value="Submit" />
         </form>
       );
