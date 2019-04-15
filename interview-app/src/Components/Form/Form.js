@@ -1,17 +1,6 @@
 import React, { Component } from "react";
 import "./Form.css";
 
-const formPropertiesSeparator = formPropsArray => {
-  let optimizedMap = new Map();
-  for (let property of formPropsArray) {
-    const { id, type, ...restProperties } = property;
-    optimizedMap.get(type) === undefined
-      ? optimizedMap.set(type, { [id]: restProperties })
-      : (optimizedMap.get(type)[id] = restProperties);
-  }
-  return optimizedMap;
-};
-
 class Form extends Component {
   constructor(props) {
     super(props);
@@ -24,26 +13,22 @@ class Form extends Component {
   }
 
   async componentDidMount() {
-    const optimisedPropsMap = formPropertiesSeparator(
-      this.props.formProps.dataElements
-    );
     this.setState({
       id: this.props.formProps.id || null,
-      observationName: this.props.formProps.observationName || null,
-      optPropsMap: optimisedPropsMap || null
+      observationName: this.props.formProps.observationName || null
     });
-    for (let [dataType, dataObj] of optimisedPropsMap) {
+    const props = this.props.formProps.dataElements;
+    console.log(this.props.formProps.dataElements);
+    for (let prop of props) {
       let initialValue;
-      for (let data in dataObj) {
-        if (dataType === "textInput") {
-          initialValue = "";
-        } else if (dataType === "numberInput") {
-          initialValue = 0;
-        } else if (dataType === "select") {
-          initialValue = "unselected";
-        }
-        await this.setState({ [data]: initialValue });
+      if (prop.type === "textInput") {
+        initialValue = "";
+      } else if (prop.type === "numberInput") {
+        initialValue = 0;
+      } else if (prop.type === "select") {
+        initialValue = 1;
       }
+      await this.setState({ [prop.id]: initialValue });
     }
     this.setState({
       loading: false
@@ -52,87 +37,95 @@ class Form extends Component {
   }
 
   // textInput-Based: Name
-  handleTextInput = propertyProps => {
-    const { name: properties } = propertyProps;
-    const { display, displayName, isRequired } = properties;
-    // console.log(properties);
-
-    if (display) {
-      return (
-        <div>
-          <label>
-            {displayName}
-            <input
-              name={displayName.toLowerCase()}
-              type="text"
-              value={this.state.value}
-              onChange={this.handleChange}
-            />
-          </label>
-        </div>
-      );
-    }
-    // console.log(propertyProps);
-  };
-
-  // numberInput-Based: Head Circumference, Height, Weight, BMI
-  handleNumberInput = propertyProps => {
-    const numberInputPropsArray = this.props.formProps.dataElements.filter(
-      property => property.type === "numberInput"
-    );
-    console.log(numberInputPropsArray);
-
-    let renderContext;
-    for (const property in propertyProps) {
-      const {
-        display,
-        displayName,
-        isRequired,
-        bounds,
-        unitOfMeasure
-      } = propertyProps[property];
-      console.log(display, displayName);
-      if (display) {
-        renderContext += (
-          <div>
-            <label>
-              {displayName}
-              <input value={this.state.property} onChange={this.handleChange} />
-            </label>
-            <input type="submit" value="Submit" />
-          </div>
-        );
-      }
+  handleTextInput = textPropertyProps => {
+    let renderContext = null;
+    if (textPropertyProps) {
+      renderContext = textPropertyProps.map(singleForm => {
+        const { id, display, displayName, isRequired } = singleForm;
+        if (display) {
+          return (
+            <div className={id}>
+              <label>
+                {displayName}
+                <input
+                  name={displayName.toLowerCase()}
+                  type="text"
+                  value={this.state.value}
+                  onChange={this.handleChange}
+                />
+              </label>
+            </div>
+          );
+        }
+      });
     }
     return renderContext;
   };
 
-  handleSelector = propertyProps => {
-    // console.log(propertyProps);
-    const { gender: properties } = propertyProps;
-    const { display, displayName, isRequired, options } = properties;
-    // console.log(options);
-
-    // need to write sort function
-
-    if (display) {
-      return (
-        <div>
-          <label>
-            {displayName}
-            <select
-              name={displayName.toLowerCase()}
-              value={this.state.gender}
-              onChange={this.handleChange}
-            >
-              {options.map(gender => {
-                return <option value={gender.id}>{gender.name}</option>;
-              })}
-            </select>
-          </label>
-        </div>
-      );
+  // numberInput-Based: Head Circumference, Height, Weight, BMI
+  handleNumberInput = numberPropertyProps => {
+    console.log(numberPropertyProps);
+    let renderContext = null;
+    if (numberPropertyProps) {
+      renderContext = numberPropertyProps.map(singleForm => {
+        const {
+          id,
+          display,
+          displayName,
+          isRequired,
+          unitOfMeasure,
+          type
+        } = singleForm;
+        if (display) {
+          return (
+            <div className={id}>
+              <label>
+                {displayName}
+                <input
+                  name={displayName.toLowerCase()}
+                  type="text"
+                  value={this.state.value}
+                  onChange={this.handleChange}
+                />{" "}
+                {unitOfMeasure}
+              </label>
+            </div>
+          );
+        }
+        return null;
+      });
     }
+    return renderContext;
+  };
+
+  handleSelectorInput = selectorPropertyProps => {
+    console.log(selectorPropertyProps);
+    let renderContext = null;
+    if (selectorPropertyProps) {
+      renderContext = selectorPropertyProps.map(singleForm => {
+        const { id, display, displayName, isRequire, options } = singleForm;
+        if (display) {
+          return (
+            <div id={id}>
+              <label>
+                {displayName}
+                <select
+                  name={displayName.toLowerCase()}
+                  value={this.state.gender}
+                  onChange={this.handleChange}
+                >
+                  {options.map(gender => {
+                    return <option value={gender.id}>{gender.name}</option>;
+                  })}
+                </select>
+              </label>
+            </div>
+          );
+        }
+        return null;
+      });
+    }
+    return renderContext;
   };
 
   handleChange = event => {
@@ -155,27 +148,34 @@ class Form extends Component {
     // if (this.state.optPropsMap) {
     //   console.log(this.state.optPropsMap.get("textInput"));
     // }
-    // console.log(this.state);
+
     if (this.state.loading) {
       return context;
     } else {
+      const props = this.props.formProps.dataElements;
+      const textInputPropsArray = props.filter(
+        prop => prop.type === "textInput"
+      );
+      const selectorPropsArray = props.filter(prop => prop.type === "select");
+      const numberInputPropsArray = props.filter(
+        prop => prop.type === "numberInput"
+      );
       console.log(this.state);
       context = (
         <form onSubmit={this.handleSubmit}>
           {/* // textinput */}
-          {this.state.optPropsMap.get("textInput")
-            ? this.handleTextInput(this.state.optPropsMap.get("textInput"))
-            : null}
-          {/* {this.handleTextInput(this.state.optPropsMap["textInput"])} */}
 
-          {this.state.optPropsMap.get("select")
-            ? this.handleSelector(this.state.optPropsMap.get("select"))
+          {textInputPropsArray
+            ? this.handleTextInput(textInputPropsArray)
             : null}
 
-          {this.state.optPropsMap.get("numberInput")
-            ? this.handleNumberInput(this.state.optPropsMap.get("numberInput"))
+          {selectorPropsArray
+            ? this.handleSelectorInput(selectorPropsArray)
             : null}
 
+          {numberInputPropsArray
+            ? this.handleNumberInput(numberInputPropsArray)
+            : null}
           <input type="submit" value="Submit" />
         </form>
       );
