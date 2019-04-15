@@ -138,8 +138,28 @@ class Form extends Component {
   };
 
   handleSubmit = event => {
-    // console.log(this.state);
     console.log(this.state);
+    console.log(this.props.formProps.dataElements);
+
+    const props = this.props.formProps.dataElements;
+
+    const { weight, height } = this.state;
+    const bmi =
+      parseInt(weight) / ((parseInt(height / 100) * parseInt(height)) / 100);
+    this.setState({
+      bmi: parseFloat(bmi.toFixed(1))
+    });
+
+    const outputObj = props.reduce((accObj, currentProp) => {
+      let { id, type } = currentProp;
+      let { [id]: value } = this.state;
+      // eslint-disable-next-line no-self-assign
+      type === "numberInput" ? (value = parseInt(value, 10)) : (value = value);
+      accObj[id] = value;
+
+      return accObj;
+    }, {});
+    console.log(outputObj);
     event.preventDefault();
   };
 
@@ -163,8 +183,7 @@ class Form extends Component {
       console.log(this.state);
       context = (
         <form onSubmit={this.handleSubmit}>
-          {/* // textinput */}
-
+          <h3>{this.state.observationName}</h3>
           {textInputPropsArray
             ? this.handleTextInput(textInputPropsArray)
             : null}
