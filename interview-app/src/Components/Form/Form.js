@@ -35,7 +35,10 @@ class Form extends Component {
       .filter(prop => prop.isRequired === true)
       .reduce((lastValiObj, currentProp) => {
         const { id } = currentProp;
-        lastValiObj[id] = { validation: false, errMsg: "" };
+        lastValiObj[id] = {
+          validation: false,
+          errMsg: ""
+        };
         return lastValiObj;
       }, {});
     this.setState({
@@ -66,8 +69,8 @@ class Form extends Component {
                 />{" "}
               </label>{" "}
               {validation === false && errMessage ? (
-                <h5 className="input-error-text">{errMessage}</h5>
-              ) : null}
+                <h5 className="input-error-text"> {errMessage} </h5>
+              ) : null}{" "}
             </div>
           );
         }
@@ -99,8 +102,8 @@ class Form extends Component {
                 {unitOfMeasure}{" "}
               </label>{" "}
               {validation === false && errMessage ? (
-                <h5 className="input-error-number">{errMessage}</h5>
-              ) : null}
+                <h5 className="input-error-number"> {errMessage} </h5>
+              ) : null}{" "}
             </div>
           );
         }
@@ -110,6 +113,7 @@ class Form extends Component {
     return renderContext;
   };
 
+  // selector-Based: gender
   handleSelectorInput = selectorPropertyProps => {
     let renderContext = null;
     if (selectorPropertyProps) {
@@ -171,7 +175,10 @@ class Form extends Component {
       }
 
       return name.split(" ").length === 2
-        ? { validation: true, errMessage: "" }
+        ? {
+            validation: true,
+            errMessage: ""
+          }
         : {
             validation: false,
             errMessage: `Please make sure the input ${propId.toUpperCase()} has been separated by a space, for example, "John citizen" `
@@ -284,10 +291,10 @@ class Form extends Component {
           <h3> {this.state.observationName} </h3>{" "}
           {textInputPropsArray
             ? this.handleTextInput(textInputPropsArray)
-            : null}
+            : null}{" "}
           {selectorPropsArray
             ? this.handleSelectorInput(selectorPropsArray)
-            : null}
+            : null}{" "}
           {numberInputPropsArray
             ? this.handleNumberInput(numberInputPropsArray)
             : null}{" "}
