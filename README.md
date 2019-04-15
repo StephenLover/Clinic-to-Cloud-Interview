@@ -51,11 +51,15 @@ Below is a brief introduction that demonstrate what I've done and what I think i
 
 ### Conclusion
 
-First I appreciate that Clinic-to-Cloud can give this opportunity to me, I refactored this code 2-3 times and I think it actually will be better if I can get some precious feedback from the experienced enginners in Clinic-to-Cloud.
+First I appreciate that Clinic-to-Cloud can give this opportunity to me.
+
+I refactored this code 2-3 times and think it actually will be better if I can get some precious feedback from the experienced enginners at Clinic-to-Cloud.
 
 Second, I really enjoyed this test and hope that I can get a further discussion for my code and my skill sets.
 
-Please let me know if you have any questions and I am looking forward to hearing from you.
+Please let me know if you have any questions.
+
+I am looking forward to hearing from you. :)
 
 Cheers,
 Stephen.
