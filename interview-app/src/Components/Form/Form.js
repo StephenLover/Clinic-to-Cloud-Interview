@@ -161,6 +161,8 @@ class Form extends Component {
     event.preventDefault();
     const props = this.props.formProps.dataElements;
     const { weight, height, validate } = this.state;
+    const compose = (...fns) =>
+      fns.reduce((f, g) => (...args) => f(g(...args)));
 
     const textInputValidator = propId => {
       const { [propId]: name } = this.state;
@@ -202,7 +204,8 @@ class Form extends Component {
       };
     };
 
-    const validationCheck = (validate, props) => {
+    // IFFE calling the validation function
+    ((validate, props) => {
       let validateObj = validate;
       for (let simplePropNeedValidate in validate) {
         const { id: validationPropId, type: validationPropType } = props.filter(
@@ -221,22 +224,53 @@ class Form extends Component {
         validate: validateObj
       });
       return validateObj;
+    })(validate, props);
+
+    const convertToJson = () => {
+      console.log(
+        parseFloat(weight),
+        parseFloat(height / 100),
+        parseFloat(height / 100) ** 2,
+        parseFloat(weight) / parseFloat(height / 100) ** 2
+      );
+      const bmi = (parseFloat(weight) / parseFloat(height / 100) ** 2).toFixed(
+        1
+      );
+      return props.reduce((accObj, currentProp) => {
+        let { id, type } = currentProp;
+        let { [id]: value } = this.state;
+        // eslint-disable-next-line no-self-assign
+        if (type === "numberInput" || type === "select") {
+          value = parseInt(value, 10);
+        }
+        id === "bmi" ? (accObj[id] = parseFloat(bmi)) : (accObj[id] = value);
+        return accObj;
+      }, {});
     };
 
-    console.log(validationCheck(validate, props));
-
-    const bmi = (parseFloat(weight) / parseFloat(height / 100) ** 2).toFixed(1);
-    const outputObj = props.reduce((accObj, currentProp) => {
-      let { id, type } = currentProp;
-      let { [id]: value } = this.state;
-      // eslint-disable-next-line no-self-assign
-      if (type === "numberInput" || type === "select") {
-        value = parseInt(value, 10);
+    const validJsonOutPut = validJson => {
+      for (let singleValidation in validate) {
+        if (validate[singleValidation].validation === false) {
+          console.log(
+            "After validation checking, the form is not valid, hence there is no output JSON :("
+          );
+          return;
+        }
       }
-      id === "bmi" ? (accObj[id] = parseFloat(bmi)) : (accObj[id] = value);
-      return accObj;
-    }, {});
-    console.log(outputObj);
+      console.log(
+        "------------------------  Below is valid output JSON   ------------------------"
+      );
+      console.log(validJson);
+      console.log(
+        "------------------------  Above is valid output JSON   ------------------------"
+      );
+      return;
+    };
+
+    compose(
+      validJsonOutPut,
+      convertToJson
+    )();
     event.preventDefault();
   };
 
