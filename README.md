@@ -4,12 +4,14 @@
 
 Hi, this is the code repo for Clinic to Cloud interview, written by Stephen.
 
-### Launch the App
+### Install and Launch the App
 
 You may install the dependencies first:
 
-Please get into the app folder first, type `cd interview-app`
+Please get into the app folder first, type `cd interview-app`.
+
 Please type `npm install` to install dependencies.
+
 Then please type `npm start` to run it on localhost.
 
 ### Instruction
@@ -38,7 +40,7 @@ Below is a brief introduction that demonstrate what I've done and what I think i
 
 ## Styling
 
-- Just briefly wrote very few css for styling for features demonstration.
+- Just briefly wrote very few css for styling for features demonstration as the specification did not mentioned that assessment is mainly based on the apporach to implement form not styling.
 - Personally, I am able to write Scss/Sass for styling and know how to use modern UI framework such as Antdesign and Bootstrap.
 - Know how to manage CSS style, such as BEM convention and 7-1 Sass Pattern.
 - Partial css3 animation skills could be implemented in this form, such as poped up or spinner.
@@ -46,9 +48,10 @@ Below is a brief introduction that demonstrate what I've done and what I think i
 
 ## Code Style
 
-- Could be better if could implement more functional programming design pattern, like currying and pipe etc...
+- Could be better if could implement more functional programming design pattern, like currying and pipe etc...(for testing)
 - Did not write any test or snapshots.
 - Performance can be improve if we can compress CSS, html file by using critial render path optimization strategy, or can use UglifyJS to minify js file.
+
 
 ### Conclusion
 
