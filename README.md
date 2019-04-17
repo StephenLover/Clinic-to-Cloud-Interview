@@ -2,7 +2,7 @@
 
 ## Technical Code Test
 
-## Update April 17, 2019 v0.0.2
+#### Update April 17, 2019 v0.0.2
 
 - BootStrap UI added for simple styling
 - Fixed error message reminder
@@ -10,7 +10,7 @@
 - Form container center styling added
 
 
-## April 15, 2019 v0.0.1
+#### April 15, 2019 v0.0.1
 
 Hi, this is the code repo for Clinic to Cloud interview, written by Stephen.
 
@@ -64,8 +64,7 @@ Below is a brief introduction that demonstrate what I've done and what I think i
 
 ## Demonstrate and Screenshot
 
-
-
+Please check `ScreenShot` folder.
 
 ## Conclusion
 
