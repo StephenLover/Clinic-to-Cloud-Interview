@@ -57,7 +57,7 @@ class Form extends Component {
         const { errMessage, validation } = propValidationObj;
         if (display) {
           return (
-            <div key={id} className={id}>
+            <div key={id}>
               <label>
                 {" "}
                 {displayName}{" "}
@@ -69,7 +69,7 @@ class Form extends Component {
                 />{" "}
               </label>{" "}
               {validation === false && errMessage ? (
-                <h5 className="input-error-text"> {errMessage} </h5>
+                <h6 className="input-error-text"> {errMessage} </h6>
               ) : null}{" "}
             </div>
           );
@@ -102,7 +102,7 @@ class Form extends Component {
                 {unitOfMeasure}{" "}
               </label>{" "}
               {validation === false && errMessage ? (
-                <h5 className="input-error-number"> {errMessage} </h5>
+                <h6 className="input-error-number"> {errMessage} </h6>
               ) : null}{" "}
             </div>
           );
@@ -170,7 +170,7 @@ class Form extends Component {
       if (name.length === 0) {
         return {
           validation: false,
-          errMessage: `Please input number in ${propId.toUpperCase()}!`
+          errMessage: `Please input your name in ${propId.toUpperCase()}!`
         };
       }
 
@@ -194,7 +194,7 @@ class Form extends Component {
       if (value < 0)
         return {
           validation: false,
-          errMessage: `Please input number in ${propId.toUpperCase()}!`
+          errMessage: `Please input a number in ${propId.toUpperCase()}!`
         };
       else if (isNaN(propId) && value <= upperLimit) {
         return {
@@ -222,7 +222,6 @@ class Form extends Component {
           validation = numberInputValidator(props, validationPropId);
         }
         validateObj[validationPropId] = validation;
-        // validationObj[validationPropId] = validation;
       }
       this.setState({
         validate: validateObj
@@ -287,19 +286,21 @@ class Form extends Component {
         prop => prop.type === "numberInput"
       );
       context = (
-        <form onSubmit={this.handleSubmit}>
-          <h3> {this.state.observationName} </h3>{" "}
-          {textInputPropsArray
-            ? this.handleTextInput(textInputPropsArray)
-            : null}{" "}
-          {selectorPropsArray
-            ? this.handleSelectorInput(selectorPropsArray)
-            : null}{" "}
-          {numberInputPropsArray
-            ? this.handleNumberInput(numberInputPropsArray)
-            : null}{" "}
-          <input type="submit" value="Submit" />
-        </form>
+        <div className="form-group container-center">
+          <form onSubmit={this.handleSubmit}>
+            <h4> {this.state.observationName} </h4>{" "}
+            {textInputPropsArray
+              ? this.handleTextInput(textInputPropsArray)
+              : null}{" "}
+            {numberInputPropsArray
+              ? this.handleNumberInput(numberInputPropsArray)
+              : null}{" "}
+            {selectorPropsArray
+              ? this.handleSelectorInput(selectorPropsArray)
+              : null}{" "}
+            <input type="submit" value="Submit" />
+          </form>{" "}
+        </div>
       );
     }
     return context;
