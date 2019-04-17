@@ -1,5 +1,7 @@
 # Clinic-to-Cloud-Interview
 
+## Technical Code Test
+
 ## April 15, 2019
 
 Hi, this is the code repo for Clinic to Cloud interview, written by Stephen.
@@ -55,15 +57,16 @@ Below is a brief introduction that demonstrate what I've done and what I think i
 
 ### Conclusion
 
-First I appreciate that Clinic-to-Cloud can give this opportunity to me.
+First I appreciate that Clinic-to-Cloud could give this opportunity to me.
 
 I refactored this code 2-3 times and think it actually will be better if I can get some precious feedback from the experienced enginners at Clinic-to-Cloud.
 
-Second, I really enjoyed this test and hope that I can get a further discussion for my code and my skill sets.
+Second, I really enjoyed this test and hope that we can get a further discussion for my code and my other skill sets.
 
 Please let me know if you have any questions.
 
 I am looking forward to hearing from you. :)
 
 Cheers,
+
 Stephen.
