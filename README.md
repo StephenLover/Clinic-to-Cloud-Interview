@@ -6,7 +6,7 @@
 
 Hi, this is the code repo for Clinic to Cloud interview, written by Stephen.
 
-### Install and Launch the App
+## Install and Launch the App
 
 You may install the dependencies first:
 
@@ -16,13 +16,13 @@ Please type `npm install` to install dependencies.
 
 Then please type `npm start` to run it on localhost.
 
-### Instruction
+## Instruction
 
 According to the specifiction that Clare sent to me, I implemented all functionalities for constructing this form.
 
 Below is a brief introduction that demonstrate what I've done and what I think it still can be improved:
 
-### Acheivement
+## Acheivement
 
 - Used ES6+ Javascript Syntax to implement features
 - Refactor form functionality based on the type of form abstract property, such as "numberInput, selector, textInput" or "optional, required"
@@ -38,9 +38,9 @@ Below is a brief introduction that demonstrate what I've done and what I think i
 - Work on different form, you may replace the input JSON file in App.js (head circumference and BMI form)
 - Did not use any external library.
 
-### Something Can be improved...
+## Something Can be improved...
 
-## Styling
+### Styling
 
 - Just briefly wrote very few css for styling for features demonstration as the specification did not mentioned that assessment is mainly based on the apporach to implement form not styling.
 - Personally, I am able to write Scss/Sass for styling and know how to use modern UI framework such as Antdesign and Bootstrap.
@@ -48,14 +48,14 @@ Below is a brief introduction that demonstrate what I've done and what I think i
 - Partial css3 animation skills could be implemented in this form, such as poped up or spinner.
 - Know how to use media query to implement desktop-first/mobile-first responsive web application
 
-## Code Style
+### Code Style
 
 - Could be better if could implement more functional programming design pattern, like currying and pipe etc...(for testing)
 - Did not write any test or snapshots.
 - Performance can be improve if we can compress CSS, html file by using critial render path optimization strategy, or can use UglifyJS to minify js file.
 
 
-### Conclusion
+## Conclusion
 
 First I appreciate that Clinic-to-Cloud could give this opportunity to me.
 
